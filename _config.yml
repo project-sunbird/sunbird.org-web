@@ -2,25 +2,14 @@
 title: Sunbird
 name: Sunbird
 email: info@sunbird.org
-description: "Sunbird Site"
+description: "Sunbird "
 environment: production
 permalink: pretty
 markdown: kramdown
 highlighter: pygments
 safe: false
 ga: UA-106552125-1
-anchorPrefix: link
-tocTopTag: h2
-showToggleButton: true
 showSearch: true
-  
-defaults:
-  -
-    scope:
-      path: "docs"
-    values:
-      layout: "page"
-
 exclude:
 - vendor
 - .gitignore
