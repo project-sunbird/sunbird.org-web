@@ -21,8 +21,8 @@ jobs:
         command: |
 
           # Need to change as per the repo name
-          git clone git@github.com:ranjit-redekar/doc.sunbird.web.git
-          cd doc.sunbird.web
+          git clone git@github.com:project-sunbird/sunbird.org-web.git
+          cd sunbird.org-web
 
           git checkout $CIRCLE_BRANCH
           jekyll build
