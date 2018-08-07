@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: lakhanmandloi/sunbird-ubuntu-fuller
+    steps:
+      - checkout
+
+      # Add SSH Key   
+      - add_ssh_keys:
+          fingerprints:
+            - $GITHUB_SSH
+
+      - type: shell
+        command: |
+          # Need to add this into circleci global variables
+          git config --global user.email $GITHUB_EMAIL
+          git config --global user.name "Ranjit Redekar"
+
+      - type: shell
+        command: |
+
+          # Need to change as per the repo name
+          git clone git@github.com:ranjit-redekar/doc.sunbird.web.git
+          cd doc.sunbird.web
+
+          git checkout $CIRCLE_BRANCH
+          jekyll build
+          mv ./_site ../$CIRCLE_BRANCH
+
+          # gh-pages branch
+          git checkout gh-pages
+          git pull origin gh-pages
+
+          if [ -d "$CIRCLE_BRANCH" ]
+          then
+            rm -r "$CIRCLE_BRANCH"
+            git add .
+            git commit -m "delete $CIRCLE_BRANCH folder"
+            git push origin gh-pages
+            git pull origin gh-pages
+          fi
+          
+          # Move site folder to gh-pages branch
+          # mkdir "$CIRCLE_BRANCH"
+          mv ../$CIRCLE_BRANCH/ ./$CIRCLE_BRANCH
+          git add .
+          git commit -m "Add new $CIRCLE_BRANCH folder"
+          git push origin gh-pages
