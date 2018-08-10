@@ -20,7 +20,7 @@ jobs:
       - type: shell
         command: |
           mkdir ../$CIRCLE_BRANCH
-          bundle exec jekyll build --destination ../$CIRCLE_BRANCH
+          jekyll build --destination ../$CIRCLE_BRANCH
 
       # Deploy to Github pages
       - type: shell
