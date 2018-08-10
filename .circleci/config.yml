@@ -22,10 +22,12 @@ jobs:
           # mkdir ../$CIRCLE_BRANCH
           # jekyll build --destination ../$CIRCLE_BRANCH
           jekyll build
+          pwd
 
       # Deploy to Github pages
       - type: shell
         command: |
+          pwd
           cd _site
           #aws s3 sync --delete . s3://sunbird-docs-qa/web/pr/$CIRCLE_PR_NUMBER
           prdata=$(curl -X GET -u $GITHUB_USER_TOKEN:x-oauth-basic https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER)
