@@ -28,11 +28,8 @@ jobs:
           cd ..
           git clone -b gh-pages "$CIRCLE_REPOSITORY_URL" appRepo
           cd appRepo
-          if [ -d "$CIRCLE_BRANCH" ]
-          then
-            rm -rf "$CIRCLE_BRANCH"
-          fi
-          mv -f ../$CIRCLE_BRANCH/ ./"$CIRCLE_BRANCH"
+          rm -R ./*
+          mv -f ../$CIRCLE_BRANCH/ ./
           git add -A
           git commit -m "$CIRCLE_BRANCH - $CIRCLE_BUILD_NUM"
           git push origin gh-pages
