@@ -19,9 +19,6 @@ jobs:
 
       - type: shell
         command: |
-          echo "baseurl: /releases/$CIRCLE_TAG/" >> _config.yml
-          echo "buildVersion: $CIRCLE_TAG" >> _config.yml
-          echo "buildNo: $CIRCLE_BUILD_NUM" >> _config.yml
           mkdir ../$CIRCLE_BRANCH
           bundle exec jekyll build --destination ../$CIRCLE_BRANCH
 
@@ -31,7 +28,6 @@ jobs:
           cd ..
           git clone -b gh-pages "$CIRCLE_REPOSITORY_URL" appRepo
           cd appRepo
-          currentBranch=$CIRCLE_BRANCH
           if [ -d "$CIRCLE_BRANCH" ]
           then
             rm -rf "$CIRCLE_BRANCH"
