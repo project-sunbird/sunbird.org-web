@@ -34,6 +34,17 @@ jobs:
           prdata=$(curl -X GET -u $GITHUB_USER_TOKEN:x-oauth-basic https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER)
           username=$(echo "${prdata}" | jq '.user.login')
           contributor=${username//\"/}
+          updatedfiles=$(curl -X GET -u $GITHUB_USER_TOKEN:x-oauth-basic https://api.github.com/repos/project-sunbird/sunbird.org-web/pulls/$CIRCLE_PR_NUMBER/files)
+          updatedfileslist=''
+          updatedsectionslist=''
+          for row in $(echo "${updatedfiles}" | jq -r '.[] | @base64')
+          do  
+          _jq() 
+          {
+            echo ${row} | base64 --decode | jq -r ${1}
+          }
+          file=$(_jq '.filename')
+          echo $file
 
 workflows:
   version: 2
