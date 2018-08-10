@@ -19,31 +19,24 @@ jobs:
 
       - type: shell
         command: |
+          echo "baseurl: /releases/$CIRCLE_TAG/" >> _config.yml
+          echo "buildVersion: $CIRCLE_TAG" >> _config.yml
+          echo "buildNo: $CIRCLE_BUILD_NUM" >> _config.yml
+          mkdir ../$CIRCLE_BRANCH
+          bundle exec jekyll build --destination ../$CIRCLE_BRANCH
 
-          # Need to change as per the repo name
-          git clone git@github.com:project-sunbird/sunbird.org-web.git
-          cd sunbird.org-web
-
-          git checkout $CIRCLE_BRANCH
-          jekyll build
-          mv ./_site ../$CIRCLE_BRANCH
-
-          # gh-pages branch
-          git checkout gh-pages
-          git pull origin gh-pages
-
+      # Deploy to Github pages
+      - type: shell
+        command: |
+          cd ..
+          git clone -b gh-pages "$CIRCLE_REPOSITORY_URL" appRepo
+          cd appRepo
+          currentBranch=$CIRCLE_BRANCH
           if [ -d "$CIRCLE_BRANCH" ]
           then
-            rm -r "$CIRCLE_BRANCH"
-            git add .
-            git commit -m "delete $CIRCLE_BRANCH folder"
-            git push origin gh-pages
-            git pull origin gh-pages
+            rm -rf "$CIRCLE_BRANCH"
           fi
-          
-          # Move site folder to gh-pages branch
-          # mkdir "$CIRCLE_BRANCH"
-          mv ../$CIRCLE_BRANCH/ ./$CIRCLE_BRANCH
-          git add .
-          git commit -m "Add new $CIRCLE_BRANCH folder"
+          mv -f ../$CIRCLE_BRANCH/ ./"$CIRCLE_BRANCH"
+          git add -A
+          git commit -m "$CIRCLE_BRANCH - $CIRCLE_BUILD_NUM"
           git push origin gh-pages
