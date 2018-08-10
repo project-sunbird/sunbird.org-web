@@ -19,8 +19,9 @@ jobs:
 
       - type: shell
         command: |
-          mkdir ../$CIRCLE_BRANCH
-          jekyll build --destination ../$CIRCLE_BRANCH
+          # mkdir ../$CIRCLE_BRANCH
+          # jekyll build --destination ../$CIRCLE_BRANCH
+          jekyll build
 
       # Deploy to Github pages
       - type: shell
