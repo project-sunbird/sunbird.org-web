@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
 
-      # Add SSH Key   
+      # Add SSH Key
       - add_ssh_keys:
           fingerprints:
             - $GITHUB_SSH
@@ -24,7 +24,7 @@ jobs:
           jekyll build
           pwd
 
-      # Deploy to Github pages
+      # Deploy to Amazon S3
       - type: shell
         command: |
           pwd
@@ -38,8 +38,8 @@ jobs:
           updatedfileslist=''
           updatedsectionslist=''
           for row in $(echo "${updatedfiles}" | jq -r '.[] | @base64')
-          do  
-           _jq() 
+          do
+           _jq()
            {
              echo ${row} | base64 --decode | jq -r ${1}
            }
@@ -77,7 +77,6 @@ jobs:
             -u $GITHUB_USER_TOKEN:x-oauth-basic \
             -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/> Click the URL for review pull request - http://sunbird-docs-qa.s3-website.ap-south-1.amazonaws.com/pr/'"$CIRCLE_PR_NUMBER"'. <br/><br/> **Modified pages are -** <br />'"$updatedfileslist"' <br/> **Modified sections are -** <br />'"$updatedsectionslist"' "}' \
             https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER/comments
-
 
 workflows:
   version: 2
