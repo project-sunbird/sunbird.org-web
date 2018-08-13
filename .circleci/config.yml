@@ -130,6 +130,10 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - prod:
+      - hold:
+          type: approval
           requires:
               - build
+      - prod:
+          requires:
+              - hold
