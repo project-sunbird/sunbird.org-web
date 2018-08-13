@@ -30,7 +30,7 @@ jobs:
           pwd
           cd _site
           ls
-          #aws s3 sync --delete . s3://sunbird-docs-qa/web/pr/$CIRCLE_PR_NUMBER
+          aws s3 sync --delete . s3://sunbird-docs-qa/web/pr/$CIRCLE_PR_NUMBER
           prdata=$(curl -X GET -u $GITHUB_USER_TOKEN:x-oauth-basic https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER)
           username=$(echo "${prdata}" | jq '.user.login')
           contributor=${username//\"/}
@@ -104,8 +104,8 @@ jobs:
           cd ..
           mkdir downloads
           cd downloads
-          aws s3 sync --delete s3://sunbird-docs-qa/releases/$CIRCLE_TAG .
-          ls           
+          aws s3 sync --delete s3://sunbird-docs-qa/web/$CIRCLE_TAG .
+          ls
       # Deploy to Gitpages
       - type: shell
         command: |
@@ -125,10 +125,11 @@ jobs:
           # git commit -m "$CIRCLE_TAG"
           # git push origin master
 
-
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - prod
+      - prod:
+          requires:
+              - build
