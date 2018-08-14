@@ -100,8 +100,9 @@ workflows:
       - pr
       - staging
           filters:
-             branches:
-               only: master
+            branches:
+              only:
+                - master
       - hold:
           type: approval
           requires:
