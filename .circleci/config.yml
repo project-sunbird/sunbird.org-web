@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  pr:
+  pr-web:
     working_directory: /project/workplace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -32,7 +32,7 @@ jobs:
           -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/><br/> Click the URL for review pull request - http://'"$CIRCLE_PR_NUMBER"'.www-qa.sunbird.org ."}' \
           https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER/comments
           
-  staging:
+  staging-web:
     working_directory: /project/workplace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -50,7 +50,7 @@ jobs:
           bundle exec jekyll build
           cd _site
           aws s3 sync --delete . s3://sunbird-docs-qa/web-staging/
-  prod:
+  prod-web:
     working_directory: /project/workspace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -105,28 +105,28 @@ workflows:
   version: 2
   web-build-deploy:
     jobs:
-      - pr:
+      - pr-web:
           filters:
             branches:
               ignore:
                 - master
                 - gh-pages
-      - staging:
+      - staging-web:
           filters:
             branches:
               only:
                 - master
-      - hold:
+      - hold-web:
           type: approval
           requires:
-              - staging
+              - staging-web
           filters:
             branches:
               only:
                 - master
-      - prod:
+      - prod-web:
           requires:
-              - hold
+              - hold-web
           filters:
             branches:
               only:
