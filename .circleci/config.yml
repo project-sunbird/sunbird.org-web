@@ -31,14 +31,11 @@ jobs:
       - type: shell
         name: Commit - Build & Deploy
         command: |
-          if [[! -z "$CIRCLE_PR_NUMBER" ]]
-          then
           echo "buildNo: $CIRCLE_BUILD_NUM" >> _config.yml
           bundle install
           bundle exec jekyll build
           cd _site
           aws s3 sync --delete . s3://sunbird-docs-qa/web-staging/
-          fi
   prod:
     working_directory: /project/workspace/
     docker:
@@ -78,7 +75,7 @@ jobs:
           rm -rf deploy
           mkdir deploy
           cd deploy
-          git clone -b gh-pages git@github.com:project-sunbird/sunbird.org-web.git cloned-repo
+          git clone -b gh-pages $CIRCLE_REPOSITORY_URL cloned-repo
           cd cloned-repo
           cp -R .git/ ../
           rm -rf *
