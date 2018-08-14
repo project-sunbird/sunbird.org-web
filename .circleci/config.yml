@@ -29,7 +29,7 @@ jobs:
          curl \
           -X POST \
           -u $GITHUB_USER_TOKEN:x-oauth-basic \
-          -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/> Click the URL for review pull request - http://sunbird-docs-qa.s3-website.ap-south-1.amazonaws.com/pr-web/'"$CIRCLE_PR_NUMBER"'.}' \
+          -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/> Click the URL for review pull request - http://sunbird-docs-qa.s3-website.ap-south-1.amazonaws.com/pr-web/'"$CIRCLE_PR_NUMBER"'."}' \
           https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER/comments
           
   staging:
