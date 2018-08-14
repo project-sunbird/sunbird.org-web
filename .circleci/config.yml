@@ -18,6 +18,20 @@ jobs:
           bundle exec jekyll build
           cd _site
           aws s3 sync --delete . s3://sunbird-docs-qa/web-pr/$CIRCLE_PR_NUMBER
+          
+      # Comment on PR
+      - type: shell
+        name: PR - Add comment on PR with URL details
+        command: |
+         prdata=$(curl -X GET -u $GITHUB_USER_TOKEN:x-oauth-basic https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER) 
+         username=$(echo "${prdata}" | jq '.user.login')
+         contributor=${username//\"/}
+         curl \
+          -X POST \
+          -u $GITHUB_USER_TOKEN:x-oauth-basic \
+          -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/><br/> Click the URL for review pull request - http://'"$CIRCLE_PR_NUMBER"'.www-qa.sunbird.org ."}' \
+          https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER/comments
+          
   staging:
     working_directory: /project/workplace/
     docker:
@@ -84,7 +98,7 @@ jobs:
           cp -R .git/ cloned-repo/
           cd cloned-repo/
           git add -A
-          git commit -m "Deploy Web - $CIRCLE_BUILD_NUM"
+          git commit -m "Deploy Web - Build No. $CIRCLE_BUILD_NUM"
           git push origin gh-pages
           
 workflows:
