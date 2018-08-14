@@ -1,17 +1,35 @@
 version: 2
 jobs:
+  pr:
+    working_directory: /project/workplace/
+    docker:
+      - image: lakhanmandloi/sunbird-ubuntu-fuller
+    steps:
+    
+      # Checkout
+      - checkout
+        
+      # Run Build command & deploy to PR site
+      - type: shell
+        name: PR - Build & Deploy
+        command: |
+          echo "buildNo: $CIRCLE_BUILD_NUM" >> _config.yml
+          bundle install
+          bundle exec jekyll build
+          cd _site
+          aws s3 sync --delete . s3://sunbird-docs-qa/web-pr/$CIRCLE_PR_NUMBER
   staging:
     working_directory: /project/workplace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
     steps:
     
-      #Checkout
+      # Checkout
       - checkout
-            
-      # Run Build command
+       
+      # Run Build command & Deploy to Staging site
       - type: shell
-        name: Build & Deploy
+        name: Commit - Build & Deploy
         command: |
           echo "buildNo: $CIRCLE_BUILD_NUM" >> _config.yml
           bundle install
@@ -24,21 +42,22 @@ jobs:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
     steps:
     
-      #Checkout
+      # Checkout
       - checkout
-          
+      
       # Add SSH Key   
       - add_ssh_keys:
           fingerprints:
             - $GITHUB_SSH_FINGERPRINT
-      #Add User
+            
+      # Configure Git
       - type: shell
         name: Configure git
         command: |
           git config --global user.email $GITHUB_USER_EMAIL
           git config --global user.name $GITHUB_USER_NAME
       
-      # Pull Code from staging site
+      # Download code from staging
       - type: shell
         name: Download code from staging
         command: |
@@ -56,7 +75,7 @@ jobs:
           rm -rf deploy
           mkdir deploy
           cd deploy
-          git clone -b gh-pages git@github.com:project-sunbird/sunbird.org-web.git cloned-repo
+          git clone -b gh-pages $CIRCLE_REPOSITORY_URL cloned-repo
           cd cloned-repo
           cp -R .git/ ../
           rm -rf *
@@ -65,18 +84,36 @@ jobs:
           cp -R .git/ cloned-repo/
           cd cloned-repo/
           git add -A
-          git commit -m "Deploy - $CIRCLE_BUILD_NUM"
+          git commit -m "Deploy Web - $CIRCLE_BUILD_NUM"
           git push origin gh-pages
           
 workflows:
   version: 2
   web-build-deploy:
     jobs:
-      - staging
+      - pr:
+          filters:
+            branches:
+              ignore:
+                - master
+                - gh-pages
+      - staging:
+          filters:
+            branches:
+              only:
+                - master
       - hold:
           type: approval
           requires:
               - staging
+          filters:
+            branches:
+              only:
+                - master
       - prod:
           requires:
               - hold
+          filters:
+            branches:
+              only:
+                - master
