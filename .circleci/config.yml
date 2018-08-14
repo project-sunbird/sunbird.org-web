@@ -101,8 +101,7 @@ workflows:
       - staging
           filters:
              branches:
-               only:
-                 - master
+               only: master
       - hold:
           type: approval
           requires:
