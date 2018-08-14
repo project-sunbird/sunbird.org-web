@@ -97,15 +97,28 @@ workflows:
   version: 2
   web-build-deploy:
     jobs:
-      - pr
-      - staging
+      - pr:
           filters:
             branches:
-              only: /^master.*/
+              only:
+                - master
+      - staging:
+          filters:
+            branches:
+              only:
+                - master
       - hold:
           type: approval
           requires:
               - staging
+          filters:
+            branches:
+              only:
+                - master
       - prod:
           requires:
               - hold
+          filters:
+            branches:
+              only:
+                - master
