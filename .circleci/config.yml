@@ -100,8 +100,9 @@ workflows:
       - pr:
           filters:
             branches:
-              only:
+              ignore:
                 - master
+                - gh-pages
       - staging:
           filters:
             branches:
