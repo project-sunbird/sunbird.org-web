@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  pr-web:
+  www-pr:
     working_directory: /project/workplace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -17,7 +17,7 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd _site
-          aws s3 sync --delete . s3://sunbird-docs-qa/web-pr/$CIRCLE_PR_NUMBER
+          aws s3 sync --delete . s3://sunbird-docs-qa/www-pr/$CIRCLE_PR_NUMBER
           
       # Comment on PR
       - type: shell
@@ -32,7 +32,7 @@ jobs:
           -d '{"body": "Hello @'"$contributor"',<br/><br/> _This is a auto-generated response._ <br/><br/> Click the URL for review pull request - http://'"$CIRCLE_PR_NUMBER"'.www-qa.sunbird.org ."}' \
           https://api.github.com/repos/project-sunbird/sunbird.org-web/issues/$CIRCLE_PR_NUMBER/comments
           
-  staging-web:
+  www-staging:
     working_directory: /project/workplace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -49,8 +49,8 @@ jobs:
           bundle install
           bundle exec jekyll build
           cd _site
-          aws s3 sync --delete . s3://sunbird-docs-qa/web-staging/
-  prod-web:
+          aws s3 sync --delete . s3://sunbird-docs-qa/www-staging/
+  www-prod:
     working_directory: /project/workspace/
     docker:
       - image: lakhanmandloi/sunbird-ubuntu-fuller
@@ -79,7 +79,7 @@ jobs:
           rm -rf downloads
           mkdir downloads
           cd downloads
-          aws s3 sync --delete s3://sunbird-docs-qa/web-staging/ .
+          aws s3 sync --delete s3://sunbird-docs-qa/www-staging/ .
            
       # Deploy to Gitpages
       - type: shell
@@ -103,30 +103,30 @@ jobs:
           
 workflows:
   version: 2
-  web-build-deploy:
+  www-build-deploy:
     jobs:
-      - pr-web:
+      - www-pr:
           filters:
             branches:
               ignore:
                 - master
                 - gh-pages
-      - staging-web:
+      - www-staging:
           filters:
             branches:
               only:
                 - master
-      - hold-web:
+      - www-hold:
           type: approval
           requires:
-              - staging-web
+              - www-staging
           filters:
             branches:
               only:
                 - master
-      - prod-web:
+      - www-prod:
           requires:
-              - hold-web
+              - www-hold
           filters:
             branches:
               only:
