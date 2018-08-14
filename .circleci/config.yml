@@ -98,10 +98,6 @@ workflows:
   web-build-deploy:
     jobs:
       - pr
-          filters:
-             branches:
-               only:
-                 - master
       - staging
           filters:
              branches:
