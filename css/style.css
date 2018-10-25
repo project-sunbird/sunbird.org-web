@@ -4653,6 +4653,9 @@ table.noborder,
 .noborder td {
   border: 0 !important; }
 
+.partnerpage table {
+  display: table !important; }
+
 .breadcrumbs {
   list-style: none;
   padding: 0; }
@@ -4895,7 +4898,7 @@ table.noborder,
   padding: 100px 0; }
 
 .section4 .main-content {
-  font-size: 40px;
+  font-size: 39px;
   color: #168b7b;
   margin: 0 0 20px 0; }
 
